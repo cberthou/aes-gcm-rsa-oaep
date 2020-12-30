@@ -73,7 +73,7 @@ export async function HybridEncrypt(pubKey: CryptoKey, text: string, label: Arra
 
   const rawSessionKey = await crypto.subtle.exportKey('raw', sessionKey);
 
-  const rsaCipherText = await window.crypto.subtle.encrypt(
+  const rsaCipherText = await crypto.subtle.encrypt(
     {
       name: 'RSA-OAEP',
       label,
@@ -104,7 +104,7 @@ export async function HybridDecrypt(privKey: CryptoKey, cipherText: ArrayBuffer,
   const rsaLength = new Uint16Array(cipherText, 0, 1)[0];
   const rsaCipherText = new Uint8Array(cipherText.slice(2, 2 + rsaLength));
   const aesCipherText = new Uint8Array(cipherText.slice(2 + rsaLength));
-  const sessionKey = await window.crypto.subtle.decrypt(
+  const sessionKey = await crypto.subtle.decrypt(
     {
       name: 'RSA-OAEP',
       label,
