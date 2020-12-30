@@ -1,6 +1,6 @@
 import { HybridDecrypt, HybridEncrypt } from '../index';
 
-describe('obj', () => {
+describe('encrypt and decrypt', () => {
   it('works', async () => {
     const { publicKey, privateKey } = await crypto.subtle.generateKey(
       {
