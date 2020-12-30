@@ -119,3 +119,25 @@ export async function HybridDecrypt(privKey: CryptoKey, cipherText: ArrayBuffer,
 
   return aesGcmDecrypt(key, aesCipherText);
 }
+
+function uint8Str2Ab(str: string): ArrayBuffer {
+  const buf = new ArrayBuffer(str.length);
+  const bufView = new Uint8Array(buf);
+  for (let i = 0, strLen = str.length; i < strLen; i += 1) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
+
+export async function pemPublicKeyToCryptoKey(pemContent: string): Promise<CryptoKey> {
+  const data = pemContent
+    .replace(/-*BEGIN PUBLIC KEY-*/, '')
+    .replace(/-*END PUBLIC KEY-*/, '')
+    .replace(/\n/g, '');
+
+  const keyBuffer = uint8Str2Ab(window.atob(data));
+
+  // console.log(keyBuffer.buffer instanceof ArrayBuffer);
+
+  return crypto.subtle.importKey('spki', keyBuffer, { name: 'RSA-OAEP', hash: 'SHA-256' }, true, ['encrypt']);
+}

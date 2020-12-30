@@ -37,6 +37,7 @@ module.exports = {
   unmockedModulePathPatterns: ['/node_modules/'],
   // test environment setup
   setupFiles: [`${__dirname}/setup/setup.js`],
+  testEnvironment: `${__dirname}/setup/environment.js`,
   // setupFilesAfterEnv: [`${__dirname}/setup/setupAfterEnv.ts`],
   // coverage settings
   collectCoverage: NO_COVERAGE === false,

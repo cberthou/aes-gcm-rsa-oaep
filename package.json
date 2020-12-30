@@ -32,6 +32,8 @@
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-typescript": "^0.14.0",
     "jest": "^26.0.1",
+    "jest-environment-jsdom": "^26.6.2",
+    "jest-environment-node": "^26.6.2",
     "prettier": "^2.0.5",
     "ts-jest": "^26.0.0",
     "ts-node": "^8.10.1",
