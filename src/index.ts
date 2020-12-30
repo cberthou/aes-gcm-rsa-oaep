@@ -130,6 +130,10 @@ function uint8Str2Ab(str: string): ArrayBuffer {
   return buf;
 }
 
+function atob(str: string) {
+  return Buffer.from(str, 'base64').toString('binary');
+}
+
 export async function pemPublicKeyToCryptoKey(pemContent: string): Promise<CryptoKey> {
   const data = pemContent
     .replace(/-*BEGIN PUBLIC KEY-*/, '')
