@@ -1,3 +1,9 @@
+// Utility functions come from here : https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
+
+/**
+ * Converts a string to an ArrayBuffer
+ * @param str
+ */
 function str2ab(str: string): ArrayBuffer {
   const buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
   const bufView = new Uint16Array(buf);
@@ -7,14 +13,23 @@ function str2ab(str: string): ArrayBuffer {
   return buf;
 }
 
+/**
+ * Converts an ArrayBuffer to a string
+ * @param buf
+ */
 function ab2str(buf: ArrayBuffer): string {
   return String.fromCharCode.apply(null, new Uint16Array(buf));
 }
 
+/**
+ * Encrypts a string using AES-GCM algorithm with a 0 nonce
+ * @param key
+ * @param str
+ */
 const aesGcmEncrypt = async (key: CryptoKey, str: string): Promise<ArrayBuffer> => {
   const nonce = new Uint8Array(16);
   nonce.fill(0);
-  const result = await window.crypto.subtle.encrypt(
+  return window.crypto.subtle.encrypt(
     {
       name: 'AES-GCM',
       iv: nonce,
@@ -22,10 +37,13 @@ const aesGcmEncrypt = async (key: CryptoKey, str: string): Promise<ArrayBuffer> 
     key,
     str2ab(str)
   );
-
-  return result;
 };
 
+/**
+ * Decrypts an array buffer using AES-GCM algorithm with a 0 nonce
+ * @param key
+ * @param enc
+ */
 const aesGcmDecrypt = async (key: CryptoKey, enc: ArrayBuffer): Promise<string> => {
   const nonce = new Uint8Array(16);
   nonce.fill(0);
@@ -43,6 +61,13 @@ const aesGcmDecrypt = async (key: CryptoKey, enc: ArrayBuffer): Promise<string> 
 
 const sessionKeyLength = 256;
 
+/**
+ * Encrypts a string with AES-GCM/RSA-OAEP
+ * @param pubKey - The RSA public key
+ * @param text - The text to encrypt
+ * @param label - The OAEP label
+ * @constructor
+ */
 export async function HybridEncrypt(pubKey: CryptoKey, text: string, label: ArrayBuffer): Promise<ArrayBuffer> {
   const sessionKey = await crypto.subtle.generateKey({ name: 'AES-GCM', length: sessionKeyLength }, true, ['encrypt']);
 
@@ -68,6 +93,13 @@ export async function HybridEncrypt(pubKey: CryptoKey, text: string, label: Arra
   return resultBuffer.buffer;
 }
 
+/**
+ * Decrypts a string with AES-GCM/RSA-OAEP
+ * @param privKey - The RSA private key
+ * @param cipherText - The encrypted text
+ * @param label - The OAEP label
+ * @constructor
+ */
 export async function HybridDecrypt(privKey: CryptoKey, cipherText: ArrayBuffer, label: ArrayBuffer): Promise<string> {
   const rsaLength = new Uint16Array(cipherText, 0, 1)[0];
   const rsaCipherText = new Uint8Array(cipherText.slice(2, 2 + rsaLength));
@@ -84,7 +116,6 @@ export async function HybridDecrypt(privKey: CryptoKey, cipherText: ArrayBuffer,
   const key = await crypto.subtle.importKey('raw', sessionKey, { name: 'AES-GCM', length: sessionKeyLength }, false, [
     'decrypt',
   ]);
-  const text = aesGcmDecrypt(key, aesCipherText);
 
-  return text;
+  return aesGcmDecrypt(key, aesCipherText);
 }
