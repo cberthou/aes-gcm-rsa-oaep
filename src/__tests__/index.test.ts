@@ -44,7 +44,6 @@ UAHog3BetRu+fy6v2QZu+IcCAwEAAQ==
 
     const key = await pemPublicKeyToCryptoKey(pemContent);
     expect(key).toBeDefined();
-    console.log(key);
     const encrypted = await HybridEncrypt(key, 'hello', Buffer.from('label'));
     expect(encrypted).toBeDefined();
   });

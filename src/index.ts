@@ -1,5 +1,7 @@
 // Utility functions come from here : https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
 
+const crypto = window && window.crypto ? window.crypto : require('@peculiar/webcrypto');
+
 /**
  * Converts a string to an ArrayBuffer
  * @param str
@@ -21,6 +23,17 @@ function ab2str(buf: ArrayBuffer): string {
   return String.fromCharCode.apply(null, new Uint16Array(buf));
 }
 
+function numberToLEBuffer(num: number): ArrayBuffer {
+  const firstNumber = num / 256;
+  const secondNumber = num % 256;
+  return new Uint8Array([firstNumber, secondNumber]);
+}
+
+function numberFromLEBuffer(buffer: ArrayBuffer): number {
+  const intArray = new Uint8Array(buffer.slice(0, 2));
+  return intArray[0] * 256 + intArray[1];
+}
+
 /**
  * Encrypts a string using AES-GCM algorithm with a 0 nonce
  * @param key
@@ -29,7 +42,7 @@ function ab2str(buf: ArrayBuffer): string {
 const aesGcmEncrypt = async (key: CryptoKey, str: string): Promise<ArrayBuffer> => {
   const nonce = new Uint8Array(16);
   nonce.fill(0);
-  return window.crypto.subtle.encrypt(
+  return crypto.subtle.encrypt(
     {
       name: 'AES-GCM',
       iv: nonce,
@@ -47,7 +60,7 @@ const aesGcmEncrypt = async (key: CryptoKey, str: string): Promise<ArrayBuffer> 
 const aesGcmDecrypt = async (key: CryptoKey, enc: ArrayBuffer): Promise<string> => {
   const nonce = new Uint8Array(16);
   nonce.fill(0);
-  const result = await window.crypto.subtle.decrypt(
+  const result = await crypto.subtle.decrypt(
     {
       name: 'AES-GCM',
       iv: nonce,
@@ -82,7 +95,7 @@ export async function HybridEncrypt(pubKey: CryptoKey, text: string, label: Arra
     rawSessionKey
   );
 
-  const rsaCipherLength = Uint16Array.from([rsaCipherText.byteLength]).buffer;
+  const rsaCipherLength = numberToLEBuffer(rsaCipherText.byteLength);
   const result = await aesGcmEncrypt(sessionKey, text);
 
   const resultBuffer = new Uint8Array(rsaCipherLength.byteLength + rsaCipherText.byteLength + result.byteLength);
@@ -101,7 +114,7 @@ export async function HybridEncrypt(pubKey: CryptoKey, text: string, label: Arra
  * @constructor
  */
 export async function HybridDecrypt(privKey: CryptoKey, cipherText: ArrayBuffer, label: ArrayBuffer): Promise<string> {
-  const rsaLength = new Uint16Array(cipherText, 0, 1)[0];
+  const rsaLength = numberFromLEBuffer(cipherText.slice(0, 2));
   const rsaCipherText = new Uint8Array(cipherText.slice(2, 2 + rsaLength));
   const aesCipherText = new Uint8Array(cipherText.slice(2 + rsaLength));
   const sessionKey = await crypto.subtle.decrypt(
@@ -135,9 +148,7 @@ export async function pemPublicKeyToCryptoKey(pemContent: string): Promise<Crypt
     .replace(/-*END PUBLIC KEY-*/, '')
     .replace(/\n/g, '');
 
-  const keyBuffer = uint8Str2Ab(window.atob(data));
-
-  // console.log(keyBuffer.buffer instanceof ArrayBuffer);
+  const keyBuffer = uint8Str2Ab(atob(data));
 
   return crypto.subtle.importKey('spki', keyBuffer, { name: 'RSA-OAEP', hash: 'SHA-256' }, true, ['encrypt']);
 }
