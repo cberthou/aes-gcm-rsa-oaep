@@ -47,5 +47,8 @@
   },
   "dependencies": {
     "hybrid-crypto-js": "^0.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
