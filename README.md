@@ -1,6 +1,6 @@
-# AES-GCM + RSA OAEP
+# AES-GCM + RSA OAEP encryption
 
-POC of AES-GCM + RSA-OAEP encryption/decryption using window.crypto api.
+AES-GCM + RSA-OAEP encryption/decryption using WebCrypto API in NodeJS or in the browser 
 
 Tests uses `@peculiar/webcrypto` for polyfilling browser crypto api.
 
