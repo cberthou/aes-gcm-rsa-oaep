@@ -1,6 +1,6 @@
 {
-  "name": "typescript-module-boilerplate",
-  "version": "2.0.0",
+  "name": "@socialgouv/aes-gcm-rsa-oaep",
+  "version": "1.0.0",
   "author": {
     "name": "Clement Berthou",
     "email": "clement.berthou@benextcompany.com"
@@ -16,7 +16,7 @@
   },
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "files": [
     "dist/"
   ],
