@@ -1,6 +1,11 @@
 {
   "name": "typescript-module-boilerplate",
   "version": "2.0.0",
+  "author": {
+    "name": "Clement Berthou",
+    "email": "clement.berthou@benextcompany.com"
+  },
+  "engines" : { "node" : ">=15" },
   "scripts": {
     "test": "yarn jest --detectOpenHandles",
     "typecheck": "yarn tsc --project ./tsconfig-typecheck.json",
