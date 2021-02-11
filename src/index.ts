@@ -3,6 +3,9 @@ import { str2ab, atob } from './utils';
 
 const crypto = typeof window !== 'undefined' && window.crypto ? window.crypto : require('crypto').webcrypto;
 
+// Recommended nonce size for AES GCM is 96 bits
+const AES_GCM_NONCE_SIZE = 12;
+
 /**
  * Converts an ArrayBuffer to a string
  * @param buf
@@ -28,7 +31,7 @@ function numberFromLEBuffer(buffer: ArrayBuffer): number {
  * @param str
  */
 const aesGcmEncrypt = async (key: CryptoKey, str: string): Promise<ArrayBuffer> => {
-  const nonce = new Uint8Array(12);
+  const nonce = new Uint8Array(AES_GCM_NONCE_SIZE);
   nonce.fill(0);
   return crypto.subtle.encrypt(
     {
@@ -46,7 +49,7 @@ const aesGcmEncrypt = async (key: CryptoKey, str: string): Promise<ArrayBuffer> 
  * @param enc
  */
 const aesGcmDecrypt = async (key: CryptoKey, enc: ArrayBuffer): Promise<string> => {
-  const nonce = new Uint8Array(12);
+  const nonce = new Uint8Array(AES_GCM_NONCE_SIZE);
   nonce.fill(0);
   const result = await crypto.subtle.decrypt(
     {
