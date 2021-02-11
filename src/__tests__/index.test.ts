@@ -1,32 +1,36 @@
+// eslint-disable-next-line import/no-unresolved
+import * as fs from 'fs';
+import * as path from 'path';
 import { HybridDecrypt, HybridEncrypt, pemPublicKeyToCryptoKey } from '../index';
+import { arrayBufferToB64 } from '../utils';
 
-describe('encrypt and decrypt', () => {
-  it('works', async () => {
-    const { publicKey, privateKey } = await crypto.subtle.generateKey(
-      {
-        name: 'RSA-OAEP',
-        modulusLength: 2048,
-        publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-        hash: 'SHA-256',
-      },
-      false,
-      ['encrypt', 'decrypt']
-    );
+describe('index', () => {
+  describe('encrypt and decrypt', () => {
+    it('works', async () => {
+      const publicKey = fs.readFileSync(path.join(__dirname, '../../public.pem'), 'utf8');
+      const privateKey = fs.readFileSync(path.join(__dirname, '../../pk8.pem'));
 
-    const encryptedText = 'Bonjour le monde';
-    const label = Buffer.from('label');
+      const pubKey = await pemPublicKeyToCryptoKey(publicKey);
 
-    const result = await HybridEncrypt(publicKey, encryptedText, label);
+      const privKey = await crypto.subtle.importKey('pkcs8', privateKey, { name: 'RSA-OAEP', hash: 'SHA-256' }, true, [
+        'encrypt',
+        'decrypt',
+      ]);
 
-    const str = await HybridDecrypt(privateKey, result, label);
+      const encryptedText = 'Bonjour le monde';
+      const label = Buffer.from('label');
 
-    expect(str).toEqual(encryptedText);
+      const result = await HybridEncrypt(pubKey, encryptedText, label);
+
+      const str = await HybridDecrypt(privKey, result, label);
+
+      expect(str).toEqual(encryptedText);
+    });
   });
-});
 
-describe('import pem key', () => {
-  it('works', async () => {
-    const pemContent = `-----BEGIN PUBLIC KEY-----
+  describe('import pem key', () => {
+    it('works', async () => {
+      const pemContent = `-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA3OcM/3pefoIZjQLEM6RS
 t47S0SA3KGIMnhh2hix/xQrmrYhN6oRXibdrmEPhhZhIN3vTf+sQ2PDYFDLy3VJQ
 H5eU6leR/ehF00rBhGkS9iuBCCHZhX5WrPq+3YeSGLZlfDU11thEi5Mjntz7nyvz
@@ -42,9 +46,12 @@ UAHog3BetRu+fy6v2QZu+IcCAwEAAQ==
 -----END PUBLIC KEY-----
 `;
 
-    const key = await pemPublicKeyToCryptoKey(pemContent);
-    expect(key).toBeDefined();
-    const encrypted = await HybridEncrypt(key, 'hello', Buffer.from('label'));
-    expect(encrypted).toBeDefined();
+      const key = await pemPublicKeyToCryptoKey(pemContent);
+      expect(key).toBeDefined();
+      const encrypted = await HybridEncrypt(key, 'hello', Buffer.from(''));
+      console.log(encrypted);
+      console.log(arrayBufferToB64(encrypted));
+      expect(encrypted).toBeDefined();
+    });
   });
 });

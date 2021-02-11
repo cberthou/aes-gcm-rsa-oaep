@@ -1,19 +1,7 @@
 // Utility functions come from here : https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
+import { str2ab, atob } from './utils';
 
-const crypto = window && window.crypto ? window.crypto : require('@peculiar/webcrypto');
-
-/**
- * Converts a string to an ArrayBuffer
- * @param str
- */
-function str2ab(str: string): ArrayBuffer {
-  const buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-  const bufView = new Uint16Array(buf);
-  for (let i = 0, strLen = str.length; i < strLen; i += 1) {
-    bufView[i] = str.charCodeAt(i);
-  }
-  return buf;
-}
+const crypto = typeof window !== 'undefined' && window.crypto ? window.crypto : require('crypto').webcrypto;
 
 /**
  * Converts an ArrayBuffer to a string
@@ -40,7 +28,7 @@ function numberFromLEBuffer(buffer: ArrayBuffer): number {
  * @param str
  */
 const aesGcmEncrypt = async (key: CryptoKey, str: string): Promise<ArrayBuffer> => {
-  const nonce = new Uint8Array(16);
+  const nonce = new Uint8Array(12);
   nonce.fill(0);
   return crypto.subtle.encrypt(
     {
@@ -58,7 +46,7 @@ const aesGcmEncrypt = async (key: CryptoKey, str: string): Promise<ArrayBuffer> 
  * @param enc
  */
 const aesGcmDecrypt = async (key: CryptoKey, enc: ArrayBuffer): Promise<string> => {
-  const nonce = new Uint8Array(16);
+  const nonce = new Uint8Array(12);
   nonce.fill(0);
   const result = await crypto.subtle.decrypt(
     {

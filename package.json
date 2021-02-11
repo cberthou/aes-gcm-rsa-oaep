@@ -40,5 +40,7 @@
     "typescript": "^3.9.3",
     "typescript-eslint-parser": "^22.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "hybrid-crypto-js": "^0.2.4"
+  }
 }
