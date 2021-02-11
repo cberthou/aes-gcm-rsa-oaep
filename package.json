@@ -1,5 +1,6 @@
 {
   "name": "@socialgouv/aes-gcm-rsa-oaep",
+  "description": "Kubeseal aes-gcm-rsa-oaep encryption implementaton in JavaScript",
   "version": "1.0.0",
   "author": {
     "name": "Clement Berthou",
