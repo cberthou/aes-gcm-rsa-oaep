@@ -11,7 +11,7 @@ const AES_GCM_NONCE_SIZE = 12;
  * @param buf
  */
 function ab2str(buf: ArrayBuffer): string {
-  return String.fromCharCode.apply(null, new Uint16Array(buf));
+  return new TextDecoder().decode(buf);
 }
 
 function numberToLEBuffer(num: number): ArrayBuffer {
