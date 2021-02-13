@@ -8,10 +8,3 @@ export const arrayBufferToB64 = (arrayBuffer: ArrayBuffer): string =>
 export function str2ab(str: string): ArrayBuffer {
   return new TextEncoder().encode(str);
 }
-
-export const atob =
-  typeof window !== 'undefined'
-    ? window.atob
-    : function (str: string) {
-        return Buffer.from(str, 'base64').toString('binary');
-      };

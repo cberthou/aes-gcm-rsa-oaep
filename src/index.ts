@@ -1,5 +1,5 @@
 // Utility functions come from here : https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
-import { str2ab, atob } from './utils';
+import { str2ab } from './utils';
 
 const crypto = typeof window !== 'undefined' && window.crypto ? window.crypto : require('crypto').webcrypto;
 
@@ -132,6 +132,13 @@ function uint8Str2Ab(str: string): ArrayBuffer {
   }
   return buf;
 }
+
+const atob =
+  typeof window !== 'undefined'
+    ? window.atob
+    : function (str: string) {
+        return Buffer.from(str, 'base64').toString('binary');
+      };
 
 export async function pemPublicKeyToCryptoKey(pemContent: string): Promise<CryptoKey> {
   const data = pemContent
