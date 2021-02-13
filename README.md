@@ -6,6 +6,8 @@ Tests uses `@peculiar/webcrypto` for polyfilling browser crypto api.
 
 This can be used to replace [kubeseal](https://github.com/bitnami-labs/sealed-secrets) encryption in JavaScript environments.
 
+See demo : https://38lo8.csb.app/
+
 ## Using x509 certificates
 
 To be able to use x509 certificates, you need to first extract the public key with 
