@@ -6,7 +6,7 @@ Tests uses `@peculiar/webcrypto` for polyfilling browser crypto api.
 
 This can be used to replace [kubeseal](https://github.com/bitnami-labs/sealed-secrets) encryption in JavaScript environments.
 
-See demo : https://38lo8.csb.app/
+See demo : http://socialgouv.github.io/webseal
 
 ## Using x509 certificates
 
